@@ -37,16 +37,28 @@ class LinkNetwork(models.Model):
     """Модель звена сети"""
 
     name = models.CharField(max_length=255, verbose_name="Название")
-    contact = models.OneToOneField(Contact, on_delete=models.CASCADE, related_name='network_link')
-    products = models.ManyToManyField(Product, verbose_name="Продукт", related_name='network_links')
-    supplier = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Поставщик")
-    debt = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Задолженность перед поставщиком")
+    contact = models.OneToOneField(
+        Contact, on_delete=models.CASCADE, related_name="network_link"
+    )
+    products = models.ManyToManyField(
+        Product, verbose_name="Продукт", related_name="network_links"
+    )
+    supplier = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        verbose_name="Поставщик",
+    )
+    debt = models.DecimalField(
+        max_digits=12, decimal_places=2, verbose_name="Задолженность перед поставщиком"
+    )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Время создания")
 
     @property
     def get_level(self):
         if self.supplier is None:
-            return 0  # Завод без поставщика — уровень 0
+            return 0
         level = 0
         supplier = self.supplier
         while supplier:
