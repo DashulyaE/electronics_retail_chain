@@ -1,4 +1,5 @@
 from django.db import models
+from rest_framework.exceptions import ValidationError
 
 
 class Contact(models.Model):
@@ -57,17 +58,25 @@ class LinkNetwork(models.Model):
 
     @property
     def get_level(self):
-        if self.supplier is None:
-            return 0
         level = 0
         supplier = self.supplier
+        visited = set()
         while supplier:
+            if supplier.id in visited:
+                # Цикл обнаружен, прерываем
+                break
+            visited.add(supplier.id)
             level += 1
             supplier = supplier.supplier
         return level
 
     def __str__(self):
         return self.name
+
+    def clean(self):
+        if self.supplier and self.pk and self.supplier.pk == self.pk:
+            raise ValidationError("Объект не может быть поставщиком сам для себя.")
+        super().clean()
 
     class Meta:
         verbose_name = "Звено сети"

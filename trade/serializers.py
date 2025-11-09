@@ -14,10 +14,16 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class LinkNetworkSerializer(serializers.ModelSerializer):
-    contact = ContactSerializer()
-    products = ProductSerializer(many=True)
+    contact = serializers.PrimaryKeyRelatedField(queryset=Contact.objects.all())
+    products = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(), many=True)
     supplier = serializers.PrimaryKeyRelatedField(queryset=LinkNetwork.objects.all(), allow_null=True)
 
     class Meta:
         model = LinkNetwork
         fields = '__all__'
+
+    def validate_supplier(self, value):
+        # Проверка, чтобы не указывать себя как поставщика
+        if value and self.instance and value == self.instance:
+            raise serializers.ValidationError("Объект не может быть поставщиком сам для себя.")
+        return value

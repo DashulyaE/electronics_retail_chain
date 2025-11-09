@@ -10,17 +10,13 @@ def clear_debt(modeladmin, request, queryset):
 
 @admin.register(LinkNetwork)
 class LinkNetworkAdmin(admin.ModelAdmin):
-    list_display = ('name', 'contact', 'get_supplier_link', 'get_level', 'debt')
+    list_display = ('id', 'name', 'contact', 'get_supplier_name', 'get_level', 'debt')
     list_filter = ('contact__city',)
     actions = [clear_debt]
 
-    def get_supplier_link(self, obj):
-        if obj.supplier:
-            url = f'/admin/trade/linknetwork/{obj.supplier.id}/'
-            return format_html('<a href="{}">{}</a>', url, obj.supplier.name)
-        return '-'
-
-    get_supplier_link.short_description = 'Поставщик'
+    def get_supplier_name(self, obj):
+        return obj.supplier.name if obj.supplier else '-'
+    get_supplier_name.short_description = 'Поставщик'
 
     def get_level(self, obj):
         return obj.get_level
@@ -28,8 +24,8 @@ class LinkNetworkAdmin(admin.ModelAdmin):
 
 @admin.register(Contact)
 class ContactAdmin(admin.ModelAdmin):
-    list_display = ('email', 'city', 'country')
+    list_display = ('id', 'email', 'city', 'country')
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'model', 'release_date')
+    list_display = ('id', 'name', 'model', 'release_date')
