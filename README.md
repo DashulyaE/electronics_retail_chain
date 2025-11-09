@@ -15,6 +15,9 @@
 ```
 git clone github.com/DashulyaE/electronics_retail_chain
 ```
+Создайте и отредактируйте файл .env, указав необходимые значения в соответствии
+с шаблоном .env.example
+
 2. Установите зависимости
 ```
 poetry install
