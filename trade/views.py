@@ -7,11 +7,15 @@ from .serializers import (ContactSerializer, LinkNetworkSerializer,
 
 
 class IsActiveUser(permissions.BasePermission):
+    """Проверка, чтобы пользователь был активен """
+
     def has_permission(self, request, view):
         return request.user and request.user.is_active
 
 
 class ContactViewSet(viewsets.ModelViewSet):
+    """Контроллер API для модели Contact """
+
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
     permission_classes = [permissions.IsAuthenticated, IsActiveUser]
@@ -20,6 +24,8 @@ class ContactViewSet(viewsets.ModelViewSet):
 
 
 class ProductViewSet(viewsets.ModelViewSet):
+    """Контроллер API для модели Product """
+
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [permissions.IsAuthenticated, IsActiveUser]
@@ -28,6 +34,8 @@ class ProductViewSet(viewsets.ModelViewSet):
 
 
 class LinkNetworkViewSet(viewsets.ModelViewSet):
+    """Контроллер API для модели LinkNetwork """
+
     queryset = LinkNetwork.objects.all()
     serializer_class = LinkNetworkSerializer
     permission_classes = [permissions.IsAuthenticated, IsActiveUser]
@@ -36,6 +44,8 @@ class LinkNetworkViewSet(viewsets.ModelViewSet):
     search_fields = ["name", "contact__city", "contact__country"]
 
     def perform_update(self, serializer):
+        """ Запрет изменение поля debt через API"""
+
         if "debt" in serializer.validated_data:
             serializer.validated_data.pop("debt")
         serializer.save()
